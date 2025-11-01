@@ -27,6 +27,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/gateway/tsconfig.app.json"
       }
+    },
+    "portfolios-subgraph": {
+      "type": "application",
+      "root": "apps/portfolios-subgraph",
+      "entryFile": "main",
+      "sourceRoot": "apps/portfolios-subgraph/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/portfolios-subgraph/tsconfig.app.json"
+      }
     }
   }
 }
