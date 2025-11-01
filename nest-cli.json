@@ -36,6 +36,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/portfolios-subgraph/tsconfig.app.json"
       }
+    },
+    "securities-subgraph": {
+      "type": "application",
+      "root": "apps/securities-subgraph",
+      "entryFile": "main",
+      "sourceRoot": "apps/securities-subgraph/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/securities-subgraph/tsconfig.app.json"
+      }
     }
   }
 }
