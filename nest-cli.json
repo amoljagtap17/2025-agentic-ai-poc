@@ -28,6 +28,15 @@
         "tsConfigPath": "apps/gateway/tsconfig.app.json"
       }
     },
+    "performances-subgraph": {
+      "type": "application",
+      "root": "apps/performances-subgraph",
+      "entryFile": "main",
+      "sourceRoot": "apps/performances-subgraph/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/performances-subgraph/tsconfig.app.json"
+      }
+    },
     "portfolios-subgraph": {
       "type": "application",
       "root": "apps/portfolios-subgraph",
