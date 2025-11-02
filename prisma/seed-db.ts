@@ -106,7 +106,7 @@ async function main() {
     }
   }
 
-  // Create some clients without households (orphaned clients)
+  /* // Create some clients without households (orphaned clients)
   console.log('👤 Creating some clients without households...');
   for (let i = 0; i < 5; i++) {
     const firstName = faker.person.firstName();
@@ -126,7 +126,7 @@ async function main() {
     console.log(
       `    Created orphaned client: ${client.firstName} ${client.lastName} (${client.relationType})`,
     );
-  }
+  } */
 
   // Print summary
   const advisorCount = await prisma.advisor.count();

@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/gateway/test/jest-e2e.json",
-    "prisma:migrate": "npx prisma migrate dev --name init"
+    "prisma:migrate": "npx prisma migrate dev --name init",
+    "prisma:seed": "ts-node prisma/seed-db.ts"
   },
   "dependencies": {
     "@apollo/gateway": "^2.11.3",
