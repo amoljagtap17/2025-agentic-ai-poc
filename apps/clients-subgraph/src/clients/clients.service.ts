@@ -14,6 +14,7 @@ export class ClientsService {
         email: true,
         phone: true,
         relationType: true,
+        householdId: true,
       },
     });
   }
@@ -28,6 +29,7 @@ export class ClientsService {
         email: true,
         phone: true,
         relationType: true,
+        householdId: true,
       },
     });
   }

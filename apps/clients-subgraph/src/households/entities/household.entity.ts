@@ -1,8 +1,11 @@
-import { Field, HideField, ID, ObjectType } from '@nestjs/graphql';
+import { Directive, Field, HideField, ID, ObjectType } from '@nestjs/graphql';
 import { Advisor } from '../../advisors/entities/advisor.entity';
 import { Client } from '../../clients/entities/client.entity';
 
-@ObjectType()
+@ObjectType({
+  description: 'A household managed by an advisor and containing clients.',
+})
+@Directive('@key(fields: "id")')
 export class Household {
   /**
    * The unique identifier of the household.
@@ -24,12 +27,10 @@ export class Household {
   /**
    * The advisor associated with the household.
    */
-  @Field((_type) => Advisor)
   advisor: Advisor;
 
   /**
    * The members of the household.
    */
-  @Field((_type) => [Client])
   members: Client[];
 }

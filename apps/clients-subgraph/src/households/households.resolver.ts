@@ -5,6 +5,7 @@ import {
   Resolver,
   ResolveReference,
 } from '@nestjs/graphql';
+import { AdvisorsService } from '../advisors/advisors.service';
 import { Advisor } from '../advisors/entities/advisor.entity';
 import { ClientsService } from '../clients/clients.service';
 import { Client } from '../clients/entities/client.entity';
@@ -16,6 +17,7 @@ export class HouseholdsResolver {
   constructor(
     private readonly householdsService: HouseholdsService,
     private readonly clientsService: ClientsService,
+    private readonly advisorsService: AdvisorsService,
   ) {}
 
   @Query(() => [Household], { name: 'households' })
@@ -25,7 +27,7 @@ export class HouseholdsResolver {
 
   @ResolveField(() => Advisor, { name: 'advisor' })
   getAdvisor(@Parent() household: Household) {
-    return { __typename: 'Advisor', id: household.advisorId };
+    return this.advisorsService.getAdvisorById(household.advisorId);
   }
 
   @ResolveField(() => [Client], { name: 'members' })

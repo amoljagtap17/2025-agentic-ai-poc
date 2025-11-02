@@ -46,12 +46,12 @@ model Client {
   id            String                @id @default(cuid())
   firstName     String
   lastName      String
-  email         String?               @unique
-  phone         String?
-  relationType  RelationType?         // e.g. SPOUSE, CHILD, PARENT
+  email         String               @unique
+  phone         String
+  relationType  RelationType
 
-  householdId   String?
-  household     Household?            @relation(fields: [householdId], references: [id], onDelete: SetNull)
+  householdId   String
+  household     Household            @relation(fields: [householdId], references: [id])
 
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt

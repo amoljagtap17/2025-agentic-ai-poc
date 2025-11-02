@@ -10,6 +10,7 @@ export class HouseholdsService {
       select: {
         id: true,
         name: true,
+        advisorId: true,
       },
     });
   }
@@ -20,6 +21,7 @@ export class HouseholdsService {
       select: {
         id: true,
         name: true,
+        advisorId: true,
       },
     });
   }
@@ -30,6 +32,7 @@ export class HouseholdsService {
       select: {
         id: true,
         name: true,
+        advisorId: true,
       },
     });
   }

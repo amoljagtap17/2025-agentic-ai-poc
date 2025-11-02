@@ -1,4 +1,5 @@
 import {
+  Directive,
   Field,
   HideField,
   ID,
@@ -17,7 +18,8 @@ registerEnumType(RelationType, {
   name: 'RelationType',
 });
 
-@ObjectType()
+@ObjectType({ description: 'A client who is a member of a household.' })
+@Directive('@key(fields: "id")')
 export class Client {
   /**
    * The unique identifier of the client.
