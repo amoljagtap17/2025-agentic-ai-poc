@@ -34,22 +34,26 @@ async function main() {
     console.log(`Created advisor: ${advisor.name}`);
   }
 
-  // Create 5 Households (distribute across advisors)
+  // Create 10 Households (distribute across advisors)
   console.log('🏠 Creating households...');
 
   const households: any[] = [];
 
-  for (let i = 0; i < 5; i++) {
-    const randomAdvisor = advisors[i];
+  for (let i = 0; i < 10; i++) {
+    const randomAdvisor = advisors[i % advisors.length]; // Distribute evenly across advisors
+
+    // Generate a family surname that will be shared by all members
+    const familyLastName = faker.person.lastName();
 
     const household = await prisma.household.create({
       data: {
-        name: `Household ${i + 1}`,
+        name: `${familyLastName} Family`,
         advisorId: randomAdvisor.id,
       },
     });
 
-    households.push(household);
+    // Store the family name with the household for later use
+    households.push({ ...household, familyLastName });
 
     console.log(
       `Created household: ${household.name} (Advisor: ${randomAdvisor.name})`,
@@ -79,12 +83,20 @@ async function main() {
 
     // Create clients for each selected relation type
     for (const relationType of selectedRelationTypes) {
-      // Create 1-3 clients per relation type
-      const numClients = Math.floor(Math.random() * 3) + 1;
+      // Create 1-3 clients per relation type depending on relation type
+      let numClients;
+      if (relationType === RelationType.SPOUSE) {
+        numClients = Math.random() > 0.5 ? 1 : 2; // 1 or 2 spouses
+      } else if (relationType === RelationType.PARENT) {
+        numClients = Math.random() > 0.3 ? 2 : 1; // Usually 2 parents, sometimes 1
+      } else {
+        numClients = Math.floor(Math.random() * 4) + 1; // 1-4 children
+      }
 
       for (let i = 0; i < numClients; i++) {
         const firstName = faker.person.firstName();
-        const lastName = faker.person.lastName();
+        // Use the family surname for all members of the household
+        const lastName = household.familyLastName;
         const email = faker.internet.email({ firstName, lastName });
         const phone = faker.phone.number();
 
@@ -100,7 +112,7 @@ async function main() {
         });
 
         console.log(
-          `Created client: ${client.firstName} ${client.lastName} (${relationType})`,
+          `  Created client: ${client.firstName} ${client.lastName} (${relationType})`,
         );
       }
     }
