@@ -53,6 +53,9 @@ model Client {
   householdId   String
   household     Household            @relation(fields: [householdId], references: [id])
 
+  accounts    Account[]
+  portfolios  Portfolio[]
+
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
 
@@ -63,4 +66,55 @@ enum RelationType {
   SPOUSE
   CHILD
   PARENT
+}
+
+model Account {
+  id          String     @id @default(cuid())
+  clientId    String
+  client      Client     @relation(fields: [clientId], references: [id])
+
+  number      String
+  type        AccountType
+  aum         Float
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([clientId])
+}
+
+enum AccountType {
+  BROKERAGE
+  RETIREMENT
+  CASH
+}
+
+model Portfolio {
+  id          String     @id @default(cuid())
+  clientId    String
+  client      Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  name        String
+  positions   Position[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([clientId])
+}
+
+model Position {
+  id          String     @id @default(cuid())
+  portfolioId String
+  portfolio   Portfolio  @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  securityId  String
+  quantity    Float
+  marketValue Float
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([portfolioId])
+  @@index([securityId])
 }
