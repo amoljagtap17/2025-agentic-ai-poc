@@ -5,7 +5,9 @@ import {
 } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { AdvisorsModule } from './advisors/advisors.module';
 import { ClientsModule } from './clients/clients.module';
+import { HouseholdsModule } from './households/households.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { ClientsModule } from './clients/clients.module';
       includeStacktraceInErrorResponses: false,
     }),
     ClientsModule,
+    AdvisorsModule,
+    HouseholdsModule,
   ],
   controllers: [],
   providers: [],

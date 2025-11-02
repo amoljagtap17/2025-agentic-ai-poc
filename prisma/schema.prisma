@@ -22,7 +22,7 @@ datasource db {
 model Advisor {
   id         String      @id @default(cuid())
   name       String
-  email      String?     @unique
+  email      String     @unique
   households Household[]
 
   createdAt  DateTime    @default(now())

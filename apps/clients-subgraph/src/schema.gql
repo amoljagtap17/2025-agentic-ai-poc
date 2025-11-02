@@ -2,12 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Advisor {
+  """The email address of the advisor."""
+  email: String!
+  households: [Household!]!
+
+  """The unique identifier of the advisor."""
+  id: ID!
+
+  """The name of the advisor."""
+  name: String!
+}
+
 type Client {
   """The email address of the client."""
   email: String
 
   """The first name of the client."""
   firstName: String!
+  household: Household!
 
   """The unique identifier of the client."""
   id: ID!
@@ -22,8 +35,22 @@ type Client {
   relationType: RelationType
 }
 
+type Household {
+  advisor: Advisor!
+
+  """The unique identifier of the household."""
+  id: ID!
+  members: [Client!]!
+
+  """The name of the household."""
+  name: String!
+}
+
 type Query {
+  advisor(email: String!): Advisor!
+  advisors: [Advisor!]!
   clients: [Client!]!
+  households: [Household!]!
 }
 
 enum RelationType {

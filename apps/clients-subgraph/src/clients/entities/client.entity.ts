@@ -1,4 +1,11 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  ID,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
+import { Household } from '../../households/entities/household.entity';
 
 export enum RelationType {
   SPOUSE = 'SPOUSE',
@@ -42,4 +49,15 @@ export class Client {
    * The relation type of the client.
    */
   relationType: RelationType | null;
+
+  /**
+   * The ID of the household associated with the client.
+   */
+  @HideField()
+  householdId: string;
+
+  /**
+   * The household associated with the client.
+   */
+  household: Household;
 }
