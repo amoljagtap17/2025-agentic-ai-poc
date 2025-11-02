@@ -53,7 +53,9 @@ type Query {
   advisor(email: String!): Advisor!
   advisors: [Advisor!]!
   clients: [Client!]!
+  clientsByHouseholdId(householdId: String!): [Client!]!
   households: [Household!]!
+  householdsByAdvisorId(advisorId: String!): [Household!]!
 }
 
 enum RelationType {

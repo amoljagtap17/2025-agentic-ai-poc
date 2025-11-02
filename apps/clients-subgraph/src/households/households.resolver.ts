@@ -1,4 +1,5 @@
 import {
+  Args,
   Parent,
   Query,
   ResolveField,
@@ -23,6 +24,11 @@ export class HouseholdsResolver {
   @Query(() => [Household], { name: 'households' })
   getHouseholds() {
     return this.householdsService.getHouseholds();
+  }
+
+  @Query(() => [Household], { name: 'householdsByAdvisorId' })
+  gethouseholdsByAdvisorId(@Args('advisorId') advisorId: string) {
+    return this.householdsService.getHouseholdsByAdvisorId(advisorId);
   }
 
   @ResolveField(() => Advisor, { name: 'advisor' })

@@ -1,4 +1,4 @@
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Household } from '../households/entities/household.entity';
 import { HouseholdsService } from '../households/households.service';
 import { ClientsService } from './clients.service';
@@ -14,6 +14,11 @@ export class ClientsResolver {
   @Query(() => [Client], { name: 'clients' })
   getClients() {
     return this.clientsService.getClients();
+  }
+
+  @Query(() => [Client], { name: 'clientsByHouseholdId' })
+  getClientsByHouseholdId(@Args('householdId') householdId: string) {
+    return this.clientsService.getClientsByHouseholdId(householdId);
   }
 
   @ResolveField(() => Household, { name: 'household' })
