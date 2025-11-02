@@ -17,8 +17,17 @@ type Client {
 
   """The phone number of the client."""
   phone: String
+
+  """The relation type of the client."""
+  relationType: RelationType
 }
 
 type Query {
   clients: [Client!]!
+}
+
+enum RelationType {
+  CHILD
+  PARENT
+  SPOUSE
 }
