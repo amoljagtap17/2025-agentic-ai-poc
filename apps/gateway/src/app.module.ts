@@ -2,26 +2,38 @@ import { IntrospectAndCompose } from '@apollo/gateway';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloGatewayDriver, ApolloGatewayDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloGatewayDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloGatewayDriverConfig>({
       driver: ApolloGatewayDriver,
-      server: {
-        graphiql: false,
-        playground: false,
-        plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      },
-      gateway: {
-        supergraphSdl: new IntrospectAndCompose({
-          subgraphs: [
-            { name: 'clients-subgraph', url: 'http://localhost:3001/graphql' },
-          ],
-          logger: console,
-          subgraphHealthCheck: true,
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
         }),
-      },
+      ],
+      useFactory: (configService: ConfigService) => ({
+        server: {
+          graphiql: false,
+          playground: false,
+          plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        },
+        gateway: {
+          supergraphSdl: new IntrospectAndCompose({
+            subgraphs: [
+              {
+                name: 'clients-subgraph',
+                url: configService.get<string>('CLIENTS_SUBGRAPH_GRAPHQL_URL'),
+              },
+            ],
+            logger: console,
+            subgraphHealthCheck: true,
+          }),
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [],
