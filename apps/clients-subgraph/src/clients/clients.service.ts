@@ -1,26 +1,28 @@
+import { PrismaService } from '@app/common';
 import { Injectable } from '@nestjs/common';
-import { CreateClientInput } from './dto/create-client.input';
-import { UpdateClientInput } from './dto/update-client.input';
+import { Client } from './entities/client.entity';
 
 @Injectable()
 export class ClientsService {
-  create(createClientInput: CreateClientInput) {
-    return 'This action adds a new client';
-  }
+  constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all clients`;
-  }
+  async getClients(): Promise<Client[]> {
+    try {
+      const clients = await this.prisma.client.findMany({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+        },
+      });
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
-  }
+      console.log('Fetched clients:', clients);
 
-  update(id: number, updateClientInput: UpdateClientInput) {
-    return `This action updates a #${id} client`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+      return clients;
+    } catch (error) {
+      throw new Error(`Failed to get clients: ${error.message}`);
+    }
   }
 }

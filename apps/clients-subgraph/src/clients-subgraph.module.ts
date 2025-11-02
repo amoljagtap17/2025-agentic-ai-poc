@@ -19,6 +19,7 @@ import { ClientsModule } from './clients/clients.module';
       playground: false,
       sortSchema: true,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      includeStacktraceInErrorResponses: false,
     }),
     ClientsModule,
   ],

@@ -5,7 +5,21 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/gateway/tsconfig.app.json"
+    "tsConfigPath": "apps/gateway/tsconfig.app.json",
+    "plugins": [
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "typeFileNameSuffix": [
+            ".input.ts",
+            ".args.ts",
+            ".entity.ts",
+            ".model.ts"
+          ],
+          "introspectComments": true
+        }
+      }
+    ]
   },
   "monorepo": true,
   "root": "apps/gateway",
@@ -16,7 +30,21 @@
       "entryFile": "main",
       "sourceRoot": "apps/clients-subgraph/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/clients-subgraph/tsconfig.app.json"
+        "tsConfigPath": "apps/clients-subgraph/tsconfig.app.json",
+        "plugins": [
+          {
+            "name": "@nestjs/graphql",
+            "options": {
+              "typeFileNameSuffix": [
+                ".input.ts",
+                ".args.ts",
+                ".entity.ts",
+                ".model.ts"
+              ],
+              "introspectComments": true
+            }
+          }
+        ]
       }
     },
     "common": {

@@ -13,7 +13,7 @@ import * as Joi from 'joi';
         NODE_ENV: Joi.string()
           .valid('development', 'production', 'test', 'provision')
           .default('development'),
-        PORT: Joi.number().port().default(3000),
+        // PORT: Joi.number().port().default(3000),
         DATABASE_URL: Joi.string().uri().required(),
         CLIENTS_SUBGRAPH_GRAPHQL_URL: Joi.string().uri().required(),
       }),

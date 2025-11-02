@@ -15,6 +15,7 @@ import { GraphQLModule } from '@nestjs/graphql';
           graphiql: false,
           playground: false,
           plugins: [ApolloServerPluginLandingPageLocalDefault()],
+          includeStacktraceInErrorResponses: false,
         },
         gateway: {
           supergraphSdl: new IntrospectAndCompose({

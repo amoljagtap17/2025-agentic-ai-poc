@@ -3,28 +3,22 @@
 # ------------------------------------------------------
 
 type Client {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
+  """The email address of the client."""
+  email: String
 
-input CreateClientInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
+  """The first name of the client."""
+  firstName: String!
 
-type Mutation {
-  createClient(createClientInput: CreateClientInput!): Client!
-  removeClient(id: Int!): Client!
-  updateClient(updateClientInput: UpdateClientInput!): Client!
+  """The unique identifier of the client."""
+  id: ID!
+
+  """The last name of the client."""
+  lastName: String!
+
+  """The phone number of the client."""
+  phone: String
 }
 
 type Query {
-  client(id: Int!): Client!
   clients: [Client!]!
-}
-
-input UpdateClientInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
 }
