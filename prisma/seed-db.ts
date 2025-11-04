@@ -1,6 +1,10 @@
 import { faker } from '@faker-js/faker';
 import 'dotenv/config';
-import { PrismaClient, RelationType } from '../generated/prisma/client';
+import {
+  AccountType,
+  PrismaClient,
+  RelationType,
+} from '../generated/prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -9,6 +13,9 @@ async function main() {
 
   // Clear existing data
   console.log('🧹 Cleaning existing data...');
+  await prisma.position.deleteMany();
+  await prisma.portfolio.deleteMany();
+  await prisma.account.deleteMany();
   await prisma.client.deleteMany();
   await prisma.household.deleteMany();
   await prisma.advisor.deleteMany();
@@ -69,6 +76,8 @@ async function main() {
     RelationType.PARENT,
   ];
 
+  const allClients: any[] = [];
+
   for (const household of households) {
     // Determine how many relation types this household will have (1, 2, or 3)
     const numRelationTypes = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
@@ -111,10 +120,109 @@ async function main() {
           },
         });
 
+        allClients.push(client);
+
         console.log(
           `  Created client: ${client.firstName} ${client.lastName} (${relationType})`,
         );
       }
+    }
+  }
+
+  // Create Accounts for each client (1-3 accounts per client)
+  console.log('💳 Creating accounts...');
+
+  const accountTypes = [
+    AccountType.BROKERAGE,
+    AccountType.RETIREMENT,
+    AccountType.CASH,
+  ];
+  const allAccounts: any[] = [];
+
+  for (const client of allClients) {
+    const numAccounts = Math.floor(Math.random() * 3) + 1; // 1-3 accounts
+
+    for (let i = 0; i < numAccounts; i++) {
+      const accountType = faker.helpers.arrayElement(accountTypes);
+      const account = await prisma.account.create({
+        data: {
+          clientId: client.id,
+          number: faker.finance.accountNumber(),
+          type: accountType,
+          aum: parseFloat(
+            faker.finance.amount({ min: 10000, max: 5000000, dec: 2 }),
+          ),
+        },
+      });
+
+      allAccounts.push(account);
+      console.log(
+        `  Created ${accountType} account: ${account.number} for ${client.firstName} ${client.lastName} (AUM: $${account.aum.toLocaleString()})`,
+      );
+    }
+  }
+
+  // Create Portfolios for each client (1-3 portfolios per client)
+  console.log('📊 Creating portfolios...');
+
+  const portfolioNames = [
+    'Conservative Growth',
+    'Aggressive Growth',
+    'Income Focus',
+    'Balanced',
+    'Technology Focus',
+    'ESG Portfolio',
+    'International',
+    'Large Cap',
+    'Small Cap',
+    'Bond Portfolio',
+  ];
+  const allPortfolios: any[] = [];
+
+  for (const client of allClients) {
+    const numPortfolios = Math.floor(Math.random() * 3) + 1; // 1-3 portfolios
+
+    for (let i = 0; i < numPortfolios; i++) {
+      const portfolioName = faker.helpers.arrayElement(portfolioNames);
+      const portfolio = await prisma.portfolio.create({
+        data: {
+          clientId: client.id,
+          name: `${client.firstName}'s ${portfolioName}`,
+        },
+      });
+
+      allPortfolios.push(portfolio);
+      console.log(`  Created portfolio: ${portfolio.name}`);
+    }
+  }
+
+  // Create Positions for each portfolio (1-3 positions per portfolio)
+  console.log('📈 Creating positions...');
+
+  for (const portfolio of allPortfolios) {
+    const numPositions = Math.floor(Math.random() * 3) + 1; // 1-3 positions
+
+    for (let i = 0; i < numPositions; i++) {
+      const quantity = parseFloat(
+        faker.finance.amount({ min: 1, max: 1000, dec: 2 }),
+      );
+      const pricePerShare = parseFloat(
+        faker.finance.amount({ min: 10, max: 500, dec: 2 }),
+      );
+      const marketValue = quantity * pricePerShare;
+
+      const position = await prisma.position.create({
+        data: {
+          portfolioId: portfolio.id,
+          securityId: '', // Keeping empty as requested
+          quantity: quantity,
+          marketValue: marketValue,
+        },
+      });
+
+      console.log(
+        `  Created position: ${quantity} shares @ $${pricePerShare.toFixed(2)} (Market Value: $${marketValue.toLocaleString()}) in ${portfolio.name}`,
+      );
     }
   }
 
@@ -144,6 +252,10 @@ async function main() {
   const advisorCount = await prisma.advisor.count();
   const householdCount = await prisma.household.count();
   const clientCount = await prisma.client.count();
+  const accountCount = await prisma.account.count();
+  const portfolioCount = await prisma.portfolio.count();
+  const positionCount = await prisma.position.count();
+
   const spouseCount = await prisma.client.count({
     where: { relationType: RelationType.SPOUSE },
   });
@@ -154,6 +266,16 @@ async function main() {
     where: { relationType: RelationType.PARENT },
   });
 
+  const brokerageAccountCount = await prisma.account.count({
+    where: { type: AccountType.BROKERAGE },
+  });
+  const retirementAccountCount = await prisma.account.count({
+    where: { type: AccountType.RETIREMENT },
+  });
+  const cashAccountCount = await prisma.account.count({
+    where: { type: AccountType.CASH },
+  });
+
   console.log('\n📊 Seeding Summary:');
   console.log(`✅ Advisors: ${advisorCount}`);
   console.log(`✅ Households: ${householdCount}`);
@@ -161,6 +283,12 @@ async function main() {
   console.log(`   - Spouses: ${spouseCount}`);
   console.log(`   - Children: ${childCount}`);
   console.log(`   - Parents: ${parentCount}`);
+  console.log(`✅ Total Accounts: ${accountCount}`);
+  console.log(`   - Brokerage: ${brokerageAccountCount}`);
+  console.log(`   - Retirement: ${retirementAccountCount}`);
+  console.log(`   - Cash: ${cashAccountCount}`);
+  console.log(`✅ Total Portfolios: ${portfolioCount}`);
+  console.log(`✅ Total Positions: ${positionCount}`);
 
   console.log('\n🎉 Database seeding completed successfully!');
 }

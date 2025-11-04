@@ -24,6 +24,12 @@ import { GraphQLModule } from '@nestjs/graphql';
                 name: 'clients-subgraph',
                 url: configService.get<string>('CLIENTS_SUBGRAPH_GRAPHQL_URL'),
               },
+              {
+                name: 'portfolios-subgraph',
+                url: configService.get<string>(
+                  'PORTFOLIOS_SUBGRAPH_GRAPHQL_URL',
+                ),
+              },
             ],
             logger: console,
             subgraphHealthCheck: true,
