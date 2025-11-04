@@ -15,6 +15,17 @@ export class PortfoliosService {
     });
   }
 
+  getPortfolioById(id: string) {
+    return this.prisma.portfolio.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        clientId: true,
+      },
+    });
+  }
+
   getPortfoliosByClientId(clientId: string) {
     return this.prisma.portfolio.findMany({
       where: { clientId },

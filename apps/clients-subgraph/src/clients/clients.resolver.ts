@@ -1,4 +1,11 @@
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+  ResolveReference,
+} from '@nestjs/graphql';
 import { Household } from '../households/entities/household.entity';
 import { HouseholdsService } from '../households/households.service';
 import { ClientsService } from './clients.service';
@@ -24,5 +31,10 @@ export class ClientsResolver {
   @ResolveField(() => Household, { name: 'household' })
   getHousehold(@Parent() client: Client) {
     return this.householdsService.getHouseholdById(client.householdId);
+  }
+
+  @ResolveReference()
+  resolveReference(reference: { __typename: string; id: string }) {
+    return this.clientsService.getClientById(reference.id);
   }
 }

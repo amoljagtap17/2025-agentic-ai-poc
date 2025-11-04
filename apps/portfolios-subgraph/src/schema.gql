@@ -28,13 +28,10 @@ enum AccountType {
 
 """A client who is a member of a household."""
 type Client {
-  """The accounts belonging to the client."""
   accounts: [Account!]!
 
   """The unique identifier of the client."""
   id: ID!
-
-  """The portfolios belonging to the client."""
   portfolios: [Portfolio!]!
 }
 
@@ -48,8 +45,6 @@ type Portfolio {
 
   """The name of the portfolio."""
   name: String!
-
-  """The positions within the portfolio."""
   positions: [Position!]!
 }
 

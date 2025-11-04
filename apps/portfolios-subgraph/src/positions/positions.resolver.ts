@@ -1,10 +1,15 @@
-import { Query, Resolver } from '@nestjs/graphql';
+import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Portfolio } from '../portfolios/entities/portfolio.entity';
+import { PortfoliosService } from '../portfolios/portfolios.service';
 import { Position } from './entities/position.entity';
 import { PositionsService } from './positions.service';
 
 @Resolver(() => Position)
 export class PositionsResolver {
-  constructor(private readonly positionsService: PositionsService) {}
+  constructor(
+    private readonly positionsService: PositionsService,
+    private readonly portfoliosService: PortfoliosService,
+  ) {}
 
   @Query(() => [Position], { name: 'positions' })
   getPositions() {
@@ -14,5 +19,10 @@ export class PositionsResolver {
   @Query(() => [Position], { name: 'positionsByPortfolioId' })
   getPositionsByPortfolioId(portfolioId: string) {
     return this.positionsService.getPositionsByPortfolioId(portfolioId);
+  }
+
+  @ResolveField(() => Portfolio, { name: 'portfolio' })
+  portfolio(@Parent() position: Position) {
+    return this.portfoliosService.getPortfolioById(position.portfolioId);
   }
 }

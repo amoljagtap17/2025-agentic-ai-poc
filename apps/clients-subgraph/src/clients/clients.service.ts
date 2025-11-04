@@ -19,6 +19,21 @@ export class ClientsService {
     });
   }
 
+  getClientById(id: string) {
+    return this.prisma.client.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        relationType: true,
+        householdId: true,
+      },
+    });
+  }
+
   getClientsByHouseholdId(householdId: string) {
     return this.prisma.client.findMany({
       where: { householdId },
