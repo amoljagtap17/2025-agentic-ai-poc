@@ -9,7 +9,6 @@ export class ClientsResolver {
 
   @ResolveField(() => [Account], { name: 'accounts' })
   getAccounts(@Parent() client: Client) {
-    console.log('aj - client.id:', client.id);
     return this.accountsService.getAccountsByClientId(client.id);
   }
 }
