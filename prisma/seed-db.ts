@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import 'dotenv/config';
 import {
   AccountType,
+  AssetClass,
   PrismaClient,
   RelationType,
 } from '../generated/prisma/client';
@@ -13,12 +14,14 @@ async function main() {
 
   // Clear existing data
   console.log('🧹 Cleaning existing data...');
+  await prisma.price.deleteMany();
   await prisma.position.deleteMany();
   await prisma.portfolio.deleteMany();
   await prisma.account.deleteMany();
   await prisma.client.deleteMany();
   await prisma.household.deleteMany();
   await prisma.advisor.deleteMany();
+  await prisma.security.deleteMany();
 
   // Create 5 Advisors
   console.log('👨‍💼 Creating advisors...');
@@ -113,7 +116,7 @@ async function main() {
           data: {
             firstName,
             lastName,
-            email,
+            email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@${faker.internet.domainName()}`, // Ensure unique emails
             phone,
             relationType,
             householdId: household.id,
@@ -144,14 +147,16 @@ async function main() {
 
     for (let i = 0; i < numAccounts; i++) {
       const accountType = faker.helpers.arrayElement(accountTypes);
+      const aum = parseFloat(
+        faker.finance.amount({ min: 10000, max: 5000000, dec: 2 }),
+      );
+
       const account = await prisma.account.create({
         data: {
           clientId: client.id,
           number: faker.finance.accountNumber(),
           type: accountType,
-          aum: parseFloat(
-            faker.finance.amount({ min: 10000, max: 5000000, dec: 2 }),
-          ),
+          aum: aum,
         },
       });
 
@@ -196,6 +201,75 @@ async function main() {
     }
   }
 
+  // Create Securities first
+  console.log('🏛️ Creating securities...');
+
+  const assetClasses = [
+    AssetClass.EQUITY,
+    AssetClass.BOND,
+    AssetClass.ETF,
+    AssetClass.MUTUAL_FUND,
+    AssetClass.CASH,
+  ];
+
+  const securities: any[] = [];
+  const tickers = [
+    'AAPL',
+    'GOOGL',
+    'MSFT',
+    'AMZN',
+    'TSLA',
+    'NVDA',
+    'META',
+    'BRK.B',
+    'JNJ',
+    'V',
+    'PG',
+    'UNH',
+    'HD',
+    'CVX',
+    'MA',
+    'ABBV',
+    'PFE',
+    'KO',
+    'PEP',
+    'TMO',
+  ];
+
+  for (let i = 0; i < 20; i++) {
+    const ticker = tickers[i];
+    const assetClass = faker.helpers.arrayElement(assetClasses);
+
+    const security = await prisma.security.create({
+      data: {
+        ticker: ticker,
+        isin: `US${faker.string.alphanumeric(10).toUpperCase()}`,
+        cusip: faker.string.alphanumeric(9).toUpperCase(),
+        name: `${faker.company.name()} ${assetClass === AssetClass.ETF ? 'ETF' : assetClass === AssetClass.MUTUAL_FUND ? 'Fund' : 'Corp'}`,
+        assetClass: assetClass,
+      },
+    });
+
+    securities.push(security);
+
+    // Create current price for the security
+    const currentPrice = parseFloat(
+      faker.finance.amount({ min: 10, max: 500, dec: 2 }),
+    );
+    await prisma.price.create({
+      data: {
+        securityId: security.id,
+        asOf: new Date(),
+        value: currentPrice,
+        currency: 'USD',
+      },
+    });
+
+    console.log(
+      `  Created security: ${security.ticker} - ${security.name} (${security.assetClass}) @ $${currentPrice.toFixed(2)}`,
+    );
+  }
+
   // Create Positions for each portfolio (1-3 positions per portfolio)
   console.log('📈 Creating positions...');
 
@@ -203,25 +277,33 @@ async function main() {
     const numPositions = Math.floor(Math.random() * 3) + 1; // 1-3 positions
 
     for (let i = 0; i < numPositions; i++) {
+      const randomSecurity = faker.helpers.arrayElement(securities);
+
+      // Get the current price for this security
+      const priceRecord = await prisma.price.findFirst({
+        where: { securityId: randomSecurity.id },
+        orderBy: { asOf: 'desc' },
+      });
+
       const quantity = parseFloat(
         faker.finance.amount({ min: 1, max: 1000, dec: 2 }),
       );
-      const pricePerShare = parseFloat(
-        faker.finance.amount({ min: 10, max: 500, dec: 2 }),
-      );
-      const marketValue = quantity * pricePerShare;
+      const pricePerShare = priceRecord
+        ? priceRecord.value
+        : parseFloat(faker.finance.amount({ min: 10, max: 500, dec: 2 }));
+      const marketValue = parseFloat((quantity * pricePerShare).toFixed(2));
 
       const position = await prisma.position.create({
         data: {
           portfolioId: portfolio.id,
-          securityId: '', // Keeping empty as requested
+          securityId: randomSecurity.id,
           quantity: quantity,
           marketValue: marketValue,
         },
       });
 
       console.log(
-        `  Created position: ${quantity} shares @ $${pricePerShare.toFixed(2)} (Market Value: $${marketValue.toLocaleString()}) in ${portfolio.name}`,
+        `  Created position: ${quantity} shares of ${randomSecurity.ticker} @ $${pricePerShare.toFixed(2)} (Market Value: $${marketValue.toLocaleString()}) in ${portfolio.name}`,
       );
     }
   }
@@ -254,6 +336,8 @@ async function main() {
   const clientCount = await prisma.client.count();
   const accountCount = await prisma.account.count();
   const portfolioCount = await prisma.portfolio.count();
+  const securityCount = await prisma.security.count();
+  const priceCount = await prisma.price.count();
   const positionCount = await prisma.position.count();
 
   const spouseCount = await prisma.client.count({
@@ -276,6 +360,19 @@ async function main() {
     where: { type: AccountType.CASH },
   });
 
+  const equityCount = await prisma.security.count({
+    where: { assetClass: AssetClass.EQUITY },
+  });
+  const bondCount = await prisma.security.count({
+    where: { assetClass: AssetClass.BOND },
+  });
+  const etfCount = await prisma.security.count({
+    where: { assetClass: AssetClass.ETF },
+  });
+  const mutualFundCount = await prisma.security.count({
+    where: { assetClass: AssetClass.MUTUAL_FUND },
+  });
+
   console.log('\n📊 Seeding Summary:');
   console.log(`✅ Advisors: ${advisorCount}`);
   console.log(`✅ Households: ${householdCount}`);
@@ -287,6 +384,12 @@ async function main() {
   console.log(`   - Brokerage: ${brokerageAccountCount}`);
   console.log(`   - Retirement: ${retirementAccountCount}`);
   console.log(`   - Cash: ${cashAccountCount}`);
+  console.log(`✅ Total Securities: ${securityCount}`);
+  console.log(`   - Equities: ${equityCount}`);
+  console.log(`   - Bonds: ${bondCount}`);
+  console.log(`   - ETFs: ${etfCount}`);
+  console.log(`   - Mutual Funds: ${mutualFundCount}`);
+  console.log(`✅ Total Prices: ${priceCount}`);
   console.log(`✅ Total Portfolios: ${portfolioCount}`);
   console.log(`✅ Total Positions: ${positionCount}`);
 
