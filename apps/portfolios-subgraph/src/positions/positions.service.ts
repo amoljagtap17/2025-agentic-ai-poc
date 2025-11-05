@@ -29,4 +29,17 @@ export class PositionsService {
       },
     });
   }
+
+  getPositionsBySecurityId(securityId: string) {
+    return this.prisma.position.findMany({
+      where: { securityId },
+      select: {
+        id: true,
+        securityId: true,
+        quantity: true,
+        marketValue: true,
+        portfolioId: true,
+      },
+    });
+  }
 }

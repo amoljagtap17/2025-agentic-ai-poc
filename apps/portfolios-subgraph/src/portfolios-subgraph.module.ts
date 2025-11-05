@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AccountsModule } from './accounts/accounts.module';
 import { PortfoliosModule } from './portfolios/portfolios.module';
+import { Security } from './positions/entities/security.entity';
 import { PositionsModule } from './positions/positions.module';
 import { Client } from './shared/client.entity';
 
@@ -19,7 +20,7 @@ import { Client } from './shared/client.entity';
         path: './apps/portfolios-subgraph/src/schema.gql',
       },
       buildSchemaOptions: {
-        orphanedTypes: [Client],
+        orphanedTypes: [Client, Security],
       },
       graphiql: false,
       playground: false,

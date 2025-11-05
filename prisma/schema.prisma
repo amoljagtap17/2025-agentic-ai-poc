@@ -137,11 +137,11 @@ model Security {
 }
 
 model Price {
-  securityId String
   asOf       DateTime
   value      Float
   currency   String     @default("USD")
 
+  securityId String
   security   Security   @relation(fields: [securityId], references: [id], onDelete: Cascade)
 
   @@id([securityId, asOf])

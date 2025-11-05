@@ -7,6 +7,7 @@ import {
   ObjectType,
 } from '@nestjs/graphql';
 import { Portfolio } from '../../portfolios/entities/portfolio.entity';
+import { Security } from './security.entity';
 
 @ObjectType({ description: 'A position within a portfolio.' })
 @Directive('@key(fields: "id")')
@@ -44,4 +45,9 @@ export class Position {
    */
   @Field(() => Float)
   marketValue: number;
+
+  /**
+   * The security associated with the position.
+   */
+  security: Security;
 }
