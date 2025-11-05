@@ -1,0 +1,77 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+enum AssetClass {
+  BOND
+  CASH
+  EQUITY
+  ETF
+  MUTUAL_FUND
+  OTHER
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+"""A position held within a financial security."""
+type Position {
+  """The unique identifier of the position."""
+  id: ID!
+}
+
+"""A price entry for a financial security."""
+type Price {
+  """The date and time the price is valid for."""
+  asOf: DateTime!
+
+  """The currency of the price value."""
+  currency: String!
+
+  """The unique identifier of the price entry."""
+  id: ID!
+
+  """The security this price is for."""
+  security: Security!
+
+  """The price value of the security."""
+  value: Float!
+}
+
+type Query {
+  priceBySecurityIdAndAsOfDate(asOf: DateTime!, securityId: String!): Price!
+  prices: [Price!]!
+  pricesBySecurityId(securityId: String!): [Price!]!
+  securities: [Security!]!
+  security(id: String!): Security!
+}
+
+"""A financial security, such as a stock or bond."""
+type Security {
+  """The asset class of the security."""
+  assetClass: AssetClass!
+
+  """
+  The Committee on Uniform Securities Identification Procedures (CUSIP) of the security.
+  """
+  cusip: String!
+
+  """The unique identifier of the security."""
+  id: ID!
+
+  """
+  The International Securities Identification Number (ISIN) of the security.
+  """
+  isin: String!
+
+  """The name of the security."""
+  name: String!
+
+  """The price entries for the security."""
+  prices: [Price!]!
+
+  """The ticker symbol of the security."""
+  ticker: String!
+}

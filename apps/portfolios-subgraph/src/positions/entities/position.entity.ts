@@ -32,6 +32,7 @@ export class Position {
   /**
    * The ID of the security associated with the position.
    */
+  @HideField()
   securityId: string;
 
   /**

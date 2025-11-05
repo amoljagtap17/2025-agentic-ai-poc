@@ -6,7 +6,6 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { Price } from '../../prices/entities/price.entity';
-import { Position } from './position.entity';
 
 export enum AssetClass {
   EQUITY = 'EQUITY',
@@ -59,9 +58,4 @@ export class Security {
    * The price entries for the security.
    */
   prices: Price[];
-
-  /**
-   * The positions held in the security.
-   */
-  positions: Position[];
 }

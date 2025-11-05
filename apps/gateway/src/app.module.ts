@@ -30,6 +30,12 @@ import { GraphQLModule } from '@nestjs/graphql';
                   'PORTFOLIOS_SUBGRAPH_GRAPHQL_URL',
                 ),
               },
+              {
+                name: 'securities-subgraph',
+                url: configService.get<string>(
+                  'SECURITIES_SUBGRAPH_GRAPHQL_URL',
+                ),
+              },
             ],
             logger: console,
             subgraphHealthCheck: true,

@@ -62,8 +62,8 @@ type Position {
   """The quantity of the position."""
   quantity: Float!
 
-  """The ID of the security associated with the position."""
-  securityId: String!
+  """The security associated with the position."""
+  security: Security!
 }
 
 type Query {
@@ -73,4 +73,11 @@ type Query {
   portfoliosByClientId: [Portfolio!]!
   positions: [Position!]!
   positionsByPortfolioId: [Position!]!
+}
+
+"""A financial security, such as a stock or bond."""
+type Security {
+  """The unique identifier of the security."""
+  id: ID!
+  positions: [Position!]!
 }
