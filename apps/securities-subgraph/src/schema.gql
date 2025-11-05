@@ -30,11 +30,11 @@ type Price {
   """The currency of the price value."""
   currency: String!
 
-  """The unique identifier of the price entry."""
-  id: ID!
-
   """The security this price is for."""
   security: Security!
+
+  """The ID of the security this price is for."""
+  securityId: String!
 
   """The price value of the security."""
   value: Float!
